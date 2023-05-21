@@ -32,14 +32,16 @@ xlabel('Ligne');
 ylabel('Colonne');
 legend('Noeuds balises', 'Noeuds inconnus');
 
- 
+numBeaconNodes_1 = numBeaconNodes;
+
 % claculate the distance between beacon nodes and unkown nodes
-for i = (numBeaconNodes + 1) : (numBeaconNodes + 1)
+i = (numBeaconNodes + 1);
+while  i <= (numBeaconNodes + NumUnkownNodes)
     unknownNodePosition = [];
     beaconInRange = [];
     beaconTabOfUnkownNode = [];
     count = 0 ;
-    for j = 1 : numBeaconNodes  
+    for j = 1 : numBeaconNodes_1  
         distance = Distance_Calculation(coordinates(i,:),coordinates(j,:));
         % when the unknown node is within range of the beacon node
         if distance < distBeaconNodes 
@@ -56,8 +58,14 @@ for i = (numBeaconNodes + 1) : (numBeaconNodes + 1)
     disp(outputStr);
     if ~isnan(beaconInRange)
        estimatedPosition = findPosition(unknownNodePosition, beaconInRange);
-       
+
        disp(estimatedPosition);
+       numBeaconNodes_1 = numBeaconNodes_1 + 1 ;
+       i =i +1;
+    else
+        ithRow = coordinates(i, :);
+        coordinates(i, :) = [];
+        coordinates = [coordinates; ithRow];
     end
 end
 
