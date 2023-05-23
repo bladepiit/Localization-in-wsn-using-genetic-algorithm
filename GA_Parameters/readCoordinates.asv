@@ -1,0 +1,11 @@
+function [coordinates] = readCoordinates(NumNodes)
+% Specify the file name
+filename = 'Coordinates.xlsx';
+SheetName = sprintf('pop%d',length(coordinates));
+% Read the values from the Excel file
+coordinates = readmatrix(filename,'Sheet', sheetName);
+%data = readtable(filename, 'Sheet', sheetName);
+% Display the values
+%disp(data);
+
+end

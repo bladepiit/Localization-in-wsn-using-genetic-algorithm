@@ -1,28 +1,37 @@
 % first we declare owr basic variables
+global NumNodes;
+nodeSizeValue = NumNodes;
+global maxIteration;
+maxIteration = 30;
+global PopSize 
+PopSize = 160;
+coordinates = readCoordinates(nodeSizeValue);
+NumNodes = length(coordinates);
+numBeaconNodes = 20 * NumNodes / 100;
+global NumUnkownNodes ;
+NumUnkownNodes = NumNodes - numBeaconNodes;
 
-NumUnkownNodes = 40 ;
 distBeaconNodes = 20 ; % the RSSI or the range of beacon nodes 
 
-beaconNodes = [5, 10; 18, 26; 15, 30; 20, 35; 25, 25; 30, 40; 35, 14; 40, 20; 42, 10; 50, 5]; % beacon nodes coordinates define from Gps or config manual
+%beaconNodes = [5, 10; 18, 26; 15, 30; 20, 35; 25, 25; 30, 40; 35, 14; 40, 20; 42, 10; 50, 5]; % beacon nodes coordinates define from Gps or config manual
+beaconNodes = coordinates(1:numBeaconNodes,:);
+
 sumError = 0 ;
-numBeaconNodes = length(beaconNodes);
+sumError_b = 0 ;
+%numBeaconNodes = length(beaconNodes);
 %disp(numBeaconNodes);
 % define the empty metrix NaN (valeur manquante)
-coordinates = NaN(NumUnkownNodes + numBeaconNodes,2);
+%coordinates = NaN(NumUnkownNodes + numBeaconNodes,2);
 
 % Fill the matrix with coordinates of beacon nodes
-coordinates(1:numBeaconNodes , :) = beaconNodes;
+%coordinates(1:numBeaconNodes , :) = beaconNodes;
 estimatePosition = NaN(NumUnkownNodes + numBeaconNodes,2);
+estimatePosition_b = NaN(NumUnkownNodes + numBeaconNodes,2);
+errorPosition = [];
+errorPosition_b = [];
 reelPosition = NaN(NumUnkownNodes + numBeaconNodes,2);
 % Fill the rest of table with random coordinates of unkown nodes
-for i = (numBeaconNodes+1) : (numBeaconNodes + NumUnkownNodes)
-    % genirate the random value
-    rowCoord = randi([1, 50]);
-    colCoord = randi([1, 50]);
-    
-    coordinates(i, :) = [rowCoord,colCoord];
-    
-end
+
 jn = numBeaconNodes+1;
 for i = 1:40
     reelPosition(i, :) = coordinates(jn, :);
@@ -64,9 +73,15 @@ while  i <= (numBeaconNodes + NumUnkownNodes)
     disp(outputStr);
     if ~isnan(beaconInRange)
        estimatedPosition = findPosition(unknownNodePosition, beaconInRange);
+       estimatedPosition_b = findPosition_b(unknownNodePosition, beaconInRange);
        estimatePosition = [estimatePosition;estimatedPosition(:,1:2)];
+       errorPosition = [errorPosition;estimatedPosition(:,3)];
        sumError = sumError + estimatedPosition(:,3);
        disp(estimatedPosition);
+       estimatePosition_b = [estimatePosition_b;estimatedPosition_b(:,1:2)];
+       errorPosition_b = [errorPosition_b;estimatedPosition_b(:,3)];
+       sumError_b = sumError_b + estimatedPosition_b(:,3);
+       (estimatedPosition_b);
        numBeaconNodes_1 = numBeaconNodes_1 + 1 ;
        i =i +1;
     else
@@ -75,6 +90,15 @@ while  i <= (numBeaconNodes + NumUnkownNodes)
         coordinates = [coordinates; ithRow];
     end
 end
-disp(sumError);
+%disp(sumError);
+%disp(sumError_b);
+%disp(errorPosition_b);
+ErForPupulationCase(errorPosition_b,errorPosition,PopSize);
+
+%ErForIterationCase(errorPosition_b,errorPosition,maxIteration);
 figure(2)
 makeGraph(beaconNodes, estimatePosition, reelPosition);
+figure(3)
+makeGraph(beaconNodes, estimatePosition_b, reelPosition);
+figure(4)
+errorGraph(errorPosition, errorPosition_b);

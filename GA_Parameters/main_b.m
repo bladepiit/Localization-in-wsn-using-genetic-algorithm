@@ -4,7 +4,7 @@ NumUnkownNodes = 40 ;
 distBeaconNodes = 20 ; % the RSSI or the range of beacon nodes 
 popSize = 40;
 beaconNodes = [5, 10; 18, 26; 15, 30; 20, 35; 25, 25; 30, 40; 35, 14; 40, 20; 42, 10; 50, 5]; % beacon nodes coordinates define from Gps or config manual
-
+sumError_b = 0 ;
 numBeaconNodes = length(beaconNodes);
 %disp(numBeaconNodes);
 % define the empty metrix NaN (valeur manquante)
@@ -12,7 +12,8 @@ coordinates = NaN(NumUnkownNodes + numBeaconNodes,2);
 
 % Fill the matrix with coordinates of beacon nodes
 coordinates(1:numBeaconNodes , :) = beaconNodes;
-
+estimatePosition_b = NaN(NumUnkownNodes + numBeaconNodes,2);
+reelPosition = NaN(NumUnkownNodes + numBeaconNodes,2);
 % Fill the rest of table with random coordinates of unkown nodes
 for i = (numBeaconNodes+1) : (numBeaconNodes + NumUnkownNodes)
     % genirate the random value
@@ -21,7 +22,11 @@ for i = (numBeaconNodes+1) : (numBeaconNodes + NumUnkownNodes)
     
     coordinates(i, :) = [rowCoord,colCoord];
 end
-
+jn = numBeaconNodes+1;
+for i = 1:40
+    reelPosition(i, :) = coordinates(jn, :);
+    jn = jn + 1 ;
+end
 % Plot the anchor nodes and the unknown nodes
 figure(1)
 scatter(coordinates(1:numBeaconNodes, 1), coordinates(1:numBeaconNodes, 2),100, 'r','square');
@@ -33,6 +38,7 @@ ylabel('Colonne');
 legend('Noeuds balises', 'Noeuds inconnus');
 
 numBeaconNodes_1 = numBeaconNodes;
+
 % claculate the distance between beacon nodes and unkown nodes
 i = (numBeaconNodes + 1);
 while  i <= (numBeaconNodes + NumUnkownNodes)
@@ -41,7 +47,7 @@ while  i <= (numBeaconNodes + NumUnkownNodes)
     beaconTabOfUnkownNode = [];
     count = 0 ;
     for j = 1 : numBeaconNodes_1  
-        distance = Distance_Calculation(coordinates(i,:),coordinates(j,:));
+        distance = Distance_Calculation_b(coordinates(i,:),coordinates(j,:));
         % when the unknown node is within range of the beacon node
         if distance < distBeaconNodes 
             count = count+1;
@@ -56,9 +62,10 @@ while  i <= (numBeaconNodes + NumUnkownNodes)
     outputStr = sprintf('Unknown node position: %s\nBeacon in range: %s', mat2str(unknownNodePosition), mat2str(beaconInRange));
     disp(outputStr);
     if ~isnan(beaconInRange)
-       estimatedPosition = findPosition(unknownNodePosition, beaconInRange);
-
-       disp(estimatedPosition);
+       estimatedPosition_b = findPosition_b(unknownNodePosition, beaconInRange);
+       estimatePosition_b = [estimatePosition;estimatedPosition(:,1:2)];
+       sumError_b = sumError_b + estimatedPosition_b(:,3);
+       disp(estimatedPosition_b);
        numBeaconNodes_1 = numBeaconNodes_1 + 1 ;
        i =i +1;
     else
@@ -67,5 +74,6 @@ while  i <= (numBeaconNodes + NumUnkownNodes)
         coordinates = [coordinates; ithRow];
     end
 end
-
-disp(size(numBeaconNodes_1,1));
+disp(sumError_b);
+figure(2)
+makeGraph_b(beaconNodes, estimatePosition, reelPosition);

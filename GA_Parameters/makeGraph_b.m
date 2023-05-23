@@ -1,4 +1,4 @@
-function makeGraph(beacon, estimatePosition, reelPosition)
+function makeGraph_b(beacon, estimatePosition, reelPosition)
     % Plotting the beacon positions
     scatter(beacon(:, 1), beacon(:, 2), 'ro', 'filled');
     hold on;

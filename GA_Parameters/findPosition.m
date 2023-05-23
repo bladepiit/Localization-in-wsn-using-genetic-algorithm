@@ -1,9 +1,13 @@
 function [estimatedPosition] = findPosition(unknownNodePosition, beaconInRange)
     reelPosition = unknownNodePosition;
     numBeaconNodes = length(beaconInRange);
-   
-    popSize = 50 ; % size of population will create
-    maxIteration = 50 ; % maximum number of iteration
+    global NumUnkownNodes ;
+    UnkownNodesLenght = NumUnkownNodes;
+    global PopSize 
+    popSize = PopSize ; % size of population will create
+    global maxIteration;
+    NumIteration = maxIteration; % maximum number of iteration
+    
     xMin = 0 ; % minimum value of x
     xMax = 50 ; % maximum value of x
     yMin = 0 ; % minimum value of y
@@ -17,9 +21,9 @@ function [estimatedPosition] = findPosition(unknownNodePosition, beaconInRange)
     fitness = calculateFitness(pop, beaconInRange, reelPosition) ; % calculate fitness of population
     
     newPopulation = fitness;
-    for i = 1 : maxIteration
+    for i = 1 : NumIteration
         
-        for j = 1 : 20
+        for j = 1 : (UnkownNodesLenght / 2)
             parent1_position = get_parent(numBeaconNodes, fitness); 
             parent2_position = get_parent(numBeaconNodes, fitness);
            

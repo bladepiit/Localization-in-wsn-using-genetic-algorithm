@@ -1,0 +1,53 @@
+function ErForPupulationCase(ErForBasicAlgo,ErForEnhAlgo)
+
+
+% Calculer la somme des valeurs
+MynForBasedGA = sum(ErForBasicAlgo) / length(ErForBasicAlgo);
+MynForEnhGA = sum(ErForEnhAlgo) / length(ErForEnhAlgo);
+% Generate the variable names based on the column index
+
+%numColumns = size(ErForBasicAlgo, 2);
+%variableNames = cell(1, numColumns);
+%for i = 1:numColumns
+%    variableNames{i} = sprintf('Value%d', i);
+%end
+variableNames = {'Value'};
+ForBasicAlgo = table(ErForBasicAlgo, 'VariableNames', variableNames); % Create a table for the row names
+% Convert column table to row table
+rowTableForBasicAlgo = array2table(table2array(ForBasicAlgo) , 'VariableNames', columnTable.Properties.VariableNames);
+
+ForEnhAlgo = table(ErForBasicAlgo, 'VariableNames', variableNames); % Create a table for the row names
+% Convert column table to row table
+rowTableForBasicAlgo = array2table(table2array(ForBasicAlgo) , 'VariableNames', columnTable.Properties.VariableNames);
+
+% Créer une table avec les valeurs et les sommes
+data = [rowTableForBasicAlgo; ErForEnhAlgo];
+
+sumData = [MynForBasedGA; MynForEnhGA];
+tableData = array2table(data, 'VariableNames', variableNames);
+
+sumTable = array2table(sumData, 'VariableNames', {'Moyenne'});
+nameofRow = {'Bised GA'; 'Enhancement GA'}; % Specify the names of the rows as a cell array
+%disp(size(nameofRow,1));
+columnTable = table(nameofRow, 'VariableNames', {'AlgoName'}); % Create a table for the row names
+% Convert column table to row table
+rowTable = array2table(columnTable , 'VariableNames', columnTable.Properties.VariableNames);
+%tabb = vertcat(rowTable, tableData);
+%tabb = [tabb, sumTable];
+
+
+%tabb = [rowTable tableData]; % Vertically concatenate the rowTable and tableData
+%tabb = horzcat(tabb, sumTable); % Concatenate the sumTable with the tabb table
+
+% Concatenate the sumTable with the tabb table
+%tabb = [tabb, sumTable];
+% Écrire les tables dans le fichier Excel
+filename = 'ErForPopulationCase.xlsx';
+% Read the existing sheets in the file
+existingSheets = sheetnames(filename);
+% Generate the new sheet name
+SheetName = sprintf('Sheet%d', length(existingSheets) + 1);
+
+writetable(tableData, filename, 'Sheet', SheetName);
+
+end
