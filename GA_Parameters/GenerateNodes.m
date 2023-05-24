@@ -1,6 +1,8 @@
 global NumNodes;
 NumNodes = 50 ;
-
+ListSheets = {'Fpop', 'Spop', 'Tpop'};
+for j = 1 : length(ListSheets)
+Sheets = ListSheets{j};
 coordinates = NaN(NumNodes,2);
 for i = 1 : NumNodes
     % genirate the random value
@@ -10,5 +12,5 @@ for i = 1 : NumNodes
     coordinates(i, :) = [rowCoord,colCoord];
     
 end
-SCord(coordinates);
-
+SCord(coordinates,Sheets);
+end

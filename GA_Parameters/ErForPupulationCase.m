@@ -1,4 +1,4 @@
-function ErForPupulationCase(ErForBasicAlgo, ErForEnhAlgo,NumUnkownNodes)
+function ErForPupulationCase(ErForBasicAlgo, ErForEnhAlgo,NumUnkownNodes,EName)
 
     % Calculer la somme des valeurs
     MynForBasedGA = sum(ErForBasicAlgo) / length(ErForBasicAlgo);
@@ -36,7 +36,7 @@ function ErForPupulationCase(ErForBasicAlgo, ErForEnhAlgo,NumUnkownNodes)
     %existingSheets = sheetnames(filename);
     % Generate the new sheet name
     %SheetName = sprintf('Sheet%d', length(existingSheets) + 1);
-    SheetName = sprintf('Tpop%d',NumUnkownNodes);
+    SheetName = sprintf('%s%d', EName, NumUnkownNodes);
     writetable(tabb, filename, 'Sheet', SheetName);
 
 end

@@ -26,7 +26,9 @@ function [estimatedPosition] = findPosition(unknownNodePosition, beaconInRange)
         for j = 1 : (UnkownNodesLenght / 2)
             parent1_position = get_parent(numBeaconNodes, fitness); 
             parent2_position = get_parent(numBeaconNodes, fitness);
-           
+            if parent1_position == parent2_position
+                parent2_position = get_parent(numBeaconNodes, fitness);
+            end
             parent1 = fitness(parent1_position,:);
             parent2 = fitness(parent2_position,:);
             sons = crossover(parent1, parent2) ; % crossover population
