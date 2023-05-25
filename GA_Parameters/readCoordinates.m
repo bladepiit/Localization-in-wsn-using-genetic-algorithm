@@ -1,4 +1,4 @@
-function [coordinates] = readCoordinates(NumNodes,EName)
+function [coordinates] = readCoordinates(EName)
 % Specify the file name
 filename = 'Coordinates.xlsx';
 %SheetName = sprintf('Fpop%d',NumNodes);

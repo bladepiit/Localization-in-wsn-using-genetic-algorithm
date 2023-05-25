@@ -1,9 +1,12 @@
 function [estimatedPosition] = findPosition(unknownNodePosition, beaconInRange)
     reelPosition = unknownNodePosition;
     numBeaconNodes = length(beaconInRange);
-   
-    popSize = 40 ; % size of population will create
-    maxIteration = 30 ; % maximum number of iteration
+    global NumUnkownNodes ;
+    UnkownNodesLenght = NumUnkownNodes;
+    global PopSize 
+    popSize = PopSize ; % size of population will create
+    global IterationForNodes; % maximum number of iteration
+    
     xMin = 0 ; % minimum value of x
     xMax = 50 ; % maximum value of x
     yMin = 0 ; % minimum value of y
@@ -15,14 +18,16 @@ function [estimatedPosition] = findPosition(unknownNodePosition, beaconInRange)
     pop = generatePopulation(popSize, xMin, xMax, yMin, yMax) ; % generate population
     %disp(pop);
     fitness = calculateFitness(pop, beaconInRange, reelPosition) ; % calculate fitness of population
-    disp(length(fitness));
+    
     newPopulation = fitness;
-    for i = 1 : maxIteration
+    for i = 1 : IterationForNodes
         
-        for j = 1 : 20
+        for j = 1 : (popSize / 2)
             parent1_position = get_parent(numBeaconNodes, fitness); 
             parent2_position = get_parent(numBeaconNodes, fitness);
-           
+            while parent1_position == parent2_position
+                parent2_position = get_parent(numBeaconNodes, fitness);
+            end
             parent1 = fitness(parent1_position,:);
             parent2 = fitness(parent2_position,:);
             sons = crossover(parent1, parent2) ; % crossover population
@@ -34,14 +39,15 @@ function [estimatedPosition] = findPosition(unknownNodePosition, beaconInRange)
             newPopulation = [newPopulation; sons];
            % disp(length(fitness));
         end
-        disp(length(newPopulation));
+        
         
         newPopulation = evaluate(newPopulation);
-        %disp(length(newPopulation));
+       
 
-        
+        newPopulation = newPopulation(1:popSize,:);
         
     end
+    
     estimatedPosition = newPopulation(1, :) ; % return the best individual
     
     
