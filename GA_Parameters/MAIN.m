@@ -13,7 +13,7 @@ for SheetIndex = 1 : length(SheetNames)
     
 
     % Get the name of the current sheet
-    currentSheet = SheetNames(SheetIndex);
+    currentSheet = SheetNames(2);
     startSheet = sprintf('The beginning of %s in GA ',mat2str(currentSheet));
     disp(startSheet);
     Conf = readCoordinates(currentSheet);
@@ -45,20 +45,28 @@ for SheetIndex = 1 : length(SheetNames)
             ErrorRateForOneIterationEGA = [];
             ErrorRateForOneIterationBGA = [];
             PositionOfAllForOneIteration = [];
+            NodeNotLocalizableEGA = [];
+            NodeNotLocalizableBGA = [];
+            NodeEstimatedReelPosition =[];
+            FirstTimeForNodeNotLocalizableEGA = [];
+            FirstTimeForNodeNotLocalizableBGA = [];
             % variable for EGA
             numBeaconNodes = NumBeaconNodes;
             UnknownNodeIndex = 1;
             beaconNodesPossitionEGA = beaconNodesPossition;
             UnkownNodesReelPositionEGA = UnkownNodesReelPosition;
-
+           
+            CountForBreak = 3;
             % variable for BGA
             numBeaconNodesBGA = NumBeaconNodes;
             UnknownNodeIndexBGA = 1;
             beaconNodesPossitionBGA = beaconNodesPossition;
             UnkownNodesReelPositionBGA = UnkownNodesReelPosition;
+ 
+            CountForBreakBGA = 2;
 
             % EGA
-            while UnknownNodeIndex <= NumUnkownNodes
+            while UnknownNodeIndex <= length(UnkownNodesReelPositionEGA) %NumUnkownNodes
                 beaconTabOfUnkownNode = [];
                 unknownNodePosition = [];
                 % this is about how to calculate the distance between Unknown nodes and beacon node (EGA) 
@@ -70,32 +78,68 @@ for SheetIndex = 1 : length(SheetNames)
                     end
                 end
                 
-                if size(beaconTabOfUnkownNode,1) >= 3
+               if size(beaconTabOfUnkownNode,1) >= 3
                     unknownNodePosition = UnkownNodesReelPositionEGA(UnknownNodeIndex,:);
                     % Estimate Position for EGA
                     estimatedPositionEGA = findPosition(unknownNodePosition, beaconTabOfUnkownNode);
                     ErrorRateForOneIterationEGA = [ErrorRateForOneIterationEGA;estimatedPositionEGA(:,3)];
-                    PositionOfAllForOneIteration = [PositionOfAllForOneIteration;estimatedPositionEGA];
+                    NodeEstimatedReelPosition = horzcat(estimatedPositionEGA,unknownNodePosition);
+                    PositionOfAllForOneIteration = [PositionOfAllForOneIteration;NodeEstimatedReelPosition];
+                    disp(PositionOfAllForOneIteration);
+                    
                     outputStr = sprintf('Unknown node position: %s\nBeacon in range: %s', mat2str(unknownNodePosition), mat2str(beaconTabOfUnkownNode));
                     disp(outputStr);
                     disp(estimatedPositionEGA);
 
-                    if estimatedPositionBGA(:,3) < 0.5
+                    if estimatedPositionEGA(:,3) < 0.5
                         beaconNodesPossitionEGA(end+1,:) = UnkownNodesReelPositionEGA(UnknownNodeIndex,:);
                         numBeaconNodes = numBeaconNodes + 1;
                     end
-                    
-                else
+                    % Check if coordinate exists in the Unknown nodes not localizable matrix
+                    if ~isnan(NodeNotLocalizableEGA)
+                    [row, ~] = find(ismember(NodeNotLocalizableEGA, unknownNodePosition, 'rows'));
+                    if ~isempty(row)
+                         % Coordinate exists, remove it
+                         NodeNotLocalizableEGA(row, :) = [];
+                         if size(FirstTimeForNodeNotLocalizableEGA,1) ~= 0
+                             FirstTimeForNodeNotLocalizableEGA(1,:) = [];
+                         end
+    
+                    end
+                    end
+                    UnknownNodeIndex = UnknownNodeIndex + 1;
+               else
+                   if size(FirstTimeForNodeNotLocalizableEGA,1) == 0
+                       FirstTimeForNodeNotLocalizableEGA = UnkownNodesReelPositionEGA(UnknownNodeIndex, :);
+                       disp(FirstTimeForNodeNotLocalizableEGA);
+                   else
+                       [rowForNode, ~] = find(ismember(FirstTimeForNodeNotLocalizableEGA, UnkownNodesReelPositionEGA(UnknownNodeIndex, :), 'rows')); 
+                       disp(rowForNode);
+                       if ~isempty(rowForNode)
+                           CountForBreak = CountForBreak - 1;
+                           disp(CountForBreak);
+                           % Check if the loop should be terminated
+                           if CountForBreak == 0
+                               break; % Exit the loop
+                           end
+                       end
+                   end
                     ithRow = UnkownNodesReelPositionEGA(UnknownNodeIndex, :);
+                    disp(ithRow);
+                    NodeNotLocalizableEGA = [NodeNotLocalizableEGA;ithRow];
+                    NodeNotLocalizableEGA = unique(NodeNotLocalizableEGA, 'rows', 'stable');
                     UnkownNodesReelPositionEGA(UnknownNodeIndex, :) = [];
                     UnkownNodesReelPositionEGA = [UnkownNodesReelPositionEGA; ithRow];
-                end
-                UnknownNodeIndex = UnknownNodeIndex + 1;
-            end
+                    disp('NAN');
 
+                end
+                
+            end
+            disp('node not Localizable :');
+            disp(NodeNotLocalizableEGA);
 
             % BGA
-           while UnknownNodeIndexBGA <= (numNodes - NumBeaconNodes)
+           while UnknownNodeIndexBGA <= length(UnkownNodesReelPositionBGA) %(numNodes - NumBeaconNodes)
                 beaconTabOfUnkownNodeBGA = [];
                 unknownNodePositionBGA = [];
              
@@ -114,20 +158,53 @@ for SheetIndex = 1 : length(SheetNames)
                     estimatedPositionBGA = findPosition_b(unknownNodePositionBGA, beaconTabOfUnkownNodeBGA); 
                     ErrorRateForOneIterationBGA = [ErrorRateForOneIterationBGA;estimatedPositionBGA(:,3)];
 
-                    outputStr = sprintf('Unknown node position: %s\nBeacon in range: %s', mat2str(unknownNodePositionBGA), mat2str(beaconTabOfUnkownNodeBGA));
-                    %disp(outputStr);
+                    outputStr = sprintf('Unknown node position BGA: %s\nBeacon in range: %s', mat2str(unknownNodePositionBGA), mat2str(beaconTabOfUnkownNodeBGA));
+                    disp(outputStr);
                     %disp(estimatedPositionBGA);
                     if estimatedPositionBGA(:,3) < 0.5
                         beaconNodesPossitionBGA(end+1,:) = UnkownNodesReelPositionBGA(UnknownNodeIndexBGA,:);
                         numBeaconNodesBGA = numBeaconNodesBGA + 1;
                     end
-                    
+                    % Check if coordinate exists in the Unknown nodes not localizable matrix
+                    if ~isnan(NodeNotLocalizableBGA)
+                    [rowBGA, ~] = find(ismember(NodeNotLocalizableBGA, unknownNodePositionBGA, 'rows'));
+                    if ~isempty(rowBGA)
+                         % Coordinate exists, remove it
+                         NodeNotLocalizableBGA(rowBGA, :) = [];
+                         if size(FirstTimeForNodeNotLocalizableBGA,1) ~= 0
+                             FirstTimeForNodeNotLocalizableBGA(1,:) = [];
+                         end
+    
+                    end
+                    end
+                    UnknownNodeIndexBGA = UnknownNodeIndexBGA + 1;
                 else
+
+                   if size(FirstTimeForNodeNotLocalizableBGA,1) == 0
+                       FirstTimeForNodeNotLocalizableBGA = UnkownNodesReelPositionBGA(UnknownNodeIndexBGA, :);
+                       disp(FirstTimeForNodeNotLocalizableBGA);
+                   else
+                       [rowForNodeBGA, ~] = find(ismember(FirstTimeForNodeNotLocalizableBGA, UnkownNodesReelPositionBGA(UnknownNodeIndexBGA, :), 'rows')); 
+                       disp(rowForNodeBGA);
+                       if ~isempty(rowForNodeBGA)
+                           CountForBreakBGA = CountForBreakBGA - 1;
+                           disp(CountForBreakBGA);
+                           % Check if the loop should be terminated
+                           if CountForBreakBGA == 0
+                               break; % Exit the loop
+                           end
+                       end
+                  end
+
                     ithRowBGA = UnkownNodesReelPositionBGA(UnknownNodeIndexBGA, :);
+                    disp(ithRowBGA);
+                    NodeNotLocalizableBGA = [NodeNotLocalizableBGA;ithRowBGA];
+                    NodeNotLocalizableBGA = unique(NodeNotLocalizableBGA, 'rows', 'stable');
                     UnkownNodesReelPositionBGA(UnknownNodeIndexBGA, :) = [];
                     UnkownNodesReelPositionBGA = [UnkownNodesReelPositionBGA; ithRowBGA];
+                    disp('NANBGA');
                 end
-                UnknownNodeIndexBGA = UnknownNodeIndexBGA + 1;
+                
             end
 
             % Error Rate for EGA
@@ -142,11 +219,20 @@ for SheetIndex = 1 : length(SheetNames)
             if size(estimatedPositionAfterNGAiteration,1) == 0
                 estimatedPositionAfterNGAiteration = PositionOfAllForOneIteration;
             else
-                for EstLength = 1 : size(estimatedPositionAfterNGAiteration,1)
-                    if PositionOfAllForOneIteration(EstLength,3) < estimatedPositionAfterNGAiteration(EstLength,3)
-                        estimatedPositionAfterNGAiteration(EstLength,:) = PositionOfAllForOneIteration(EstLength,:);
+                 disp(size(PositionOfAllForOneIteration,1));
+                 disp(size(estimatedPositionAfterNGAiteration,1));
+                for EstLength = 1 : size(PositionOfAllForOneIteration,1)
+                    [r, ~] = find(ismember(estimatedPositionAfterNGAiteration(:,4:5), PositionOfAllForOneIteration(EstLength,4:5), 'rows'));
+                    disp(estimatedPositionAfterNGAiteration);
+                    if ~isempty(r)
+                        if PositionOfAllForOneIteration(EstLength,3) < estimatedPositionAfterNGAiteration(r,3)
+                            estimatedPositionAfterNGAiteration(r,:) = PositionOfAllForOneIteration(EstLength,:);
+                        end
+                    else
+                        estimatedPositionAfterNGAiteration(end+1,:) = PositionOfAllForOneIteration(EstLength,:);
                     end
-                end
+                 end
+                
             end
         end
         disp('after 30 iteration the estimated position :');
@@ -159,4 +245,6 @@ for SheetIndex = 1 : length(SheetNames)
     end
     endSheet = sprintf('The end of %s in GA ',mat2str(currentSheet));
     disp(endSheet);
+    figure(1);
+    Graph(beaconNodesPossition,UnkownNodesReelPosition,estimatedPositionAfterNGAiteration,NodeNotLocalizableEGA);
 end
