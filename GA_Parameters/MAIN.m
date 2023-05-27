@@ -13,7 +13,7 @@ for SheetIndex = 1 : length(SheetNames)
     
 
     % Get the name of the current sheet
-    currentSheet = SheetNames(2);
+    currentSheet = SheetNames(SheetIndex);
     startSheet = sprintf('The beginning of %s in GA ',mat2str(currentSheet));
     disp(startSheet);
     Conf = readCoordinates(currentSheet);
@@ -224,9 +224,12 @@ for SheetIndex = 1 : length(SheetNames)
                 for EstLength = 1 : size(PositionOfAllForOneIteration,1)
                     [r, ~] = find(ismember(estimatedPositionAfterNGAiteration(:,4:5), PositionOfAllForOneIteration(EstLength,4:5), 'rows'));
                     disp(estimatedPositionAfterNGAiteration);
+                    disp(r);
                     if ~isempty(r)
+                        for ts = 1:length(r)
                         if PositionOfAllForOneIteration(EstLength,3) < estimatedPositionAfterNGAiteration(r,3)
-                            estimatedPositionAfterNGAiteration(r,:) = PositionOfAllForOneIteration(EstLength,:);
+                            estimatedPositionAfterNGAiteration(r(ts),:) = PositionOfAllForOneIteration(EstLength,:);
+                        end
                         end
                     else
                         estimatedPositionAfterNGAiteration(end+1,:) = PositionOfAllForOneIteration(EstLength,:);
@@ -238,7 +241,7 @@ for SheetIndex = 1 : length(SheetNames)
         disp('after 30 iteration the estimated position :');
         disp(estimatedPositionAfterNGAiteration);
         
-        %ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
+        ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
         
         endPop = sprintf('The end of %s in GA ',mat2str(PopSize));
         disp(endPop);
