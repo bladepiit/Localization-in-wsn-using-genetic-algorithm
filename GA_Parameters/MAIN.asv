@@ -10,8 +10,12 @@ filename = 'Coordinates.xlsx'; % specifies the name of the Excel file that will 
 SheetNames = sheetnames(filename);% The sheetnames function is used to extract the sheet names from the Excel file.
 
 for SheetIndex = 1 : length(SheetNames)
+    
+
     % Get the name of the current sheet
     currentSheet = SheetNames(SheetIndex);
+    startSheet = sprintf('The beginning of %s in GA ',mat2str(currentSheet));
+    disp(startSheet);
     Conf = readCoordinates(currentSheet);
     % Perform operations on the current sheet
     numNodes = length(Conf); % Get the number of nodes from the Conf variable
@@ -23,13 +27,16 @@ for SheetIndex = 1 : length(SheetNames)
     ListPopulation = [10,20,40,80,160]; % Define a list of population values
     beaconNodesPossition = Conf(1:NumBeaconNodes,:);
     UnkownNodesReelPosition = Conf(NumBeaconNodes+1:end,:);
-    disp(UnkownNodesReelPosition);
+    
     for popIteration = 1 : length(ListPopulation)
         global PopSize;
         PopSize = ListPopulation(popIteration);
-        
+        startPop = sprintf('The beginning of %s in GA ',mat2str(PopSize));
+        disp(startPop);
+
         FileOfAverageErrorRateForAllEGA = [];
         FileOfAverageErrorRateForAllBGA = [];
+        estimatedPositionAfterNGAiteration = [];
         for IterationGA = 1 : IterationForGA
             outputIteration = sprintf('%s Iteration GA Round',mat2str(IterationGA));
             disp(outputIteration);
@@ -77,12 +84,13 @@ for SheetIndex = 1 : length(SheetNames)
                         beaconNodesPossitionEGA(end+1,:) = UnkownNodesReelPositionEGA(UnknownNodeIndex,:);
                         numBeaconNodes = numBeaconNodes + 1;
                     end
-                    UnknownNodeIndex = UnknownNodeIndex + 1;
+                    
                 else
                     ithRow = UnkownNodesReelPositionEGA(UnknownNodeIndex, :);
                     UnkownNodesReelPositionEGA(UnknownNodeIndex, :) = [];
                     UnkownNodesReelPositionEGA = [UnkownNodesReelPositionEGA; ithRow];
                 end
+                UnknownNodeIndex = UnknownNodeIndex + 1;
             end
 
 
@@ -113,12 +121,13 @@ for SheetIndex = 1 : length(SheetNames)
                         beaconNodesPossitionBGA(end+1,:) = UnkownNodesReelPositionBGA(UnknownNodeIndexBGA,:);
                         numBeaconNodesBGA = numBeaconNodesBGA + 1;
                     end
-                    UnknownNodeIndexBGA = UnknownNodeIndexBGA + 1;
+                    
                 else
                     ithRowBGA = UnkownNodesReelPositionBGA(UnknownNodeIndexBGA, :);
                     UnkownNodesReelPositionBGA(UnknownNodeIndexBGA, :) = [];
                     UnkownNodesReelPositionBGA = [UnkownNodesReelPositionBGA; ithRowBGA];
                 end
+                UnknownNodeIndexBGA = UnknownNodeIndexBGA + 1;
             end
 
             % Error Rate for EGA
@@ -128,9 +137,26 @@ for SheetIndex = 1 : length(SheetNames)
             % Error Rate for BGA
             AverageErrorRateForOneIterationBGA = sum(ErrorRateForOneIterationBGA) / length(ErrorRateForOneIterationBGA);
             FileOfAverageErrorRateForAllBGA = [FileOfAverageErrorRateForAllBGA;AverageErrorRateForOneIterationBGA];
+
+            % estimated position after 30 GA iteration 
+            if size(estimatedPositionAfterNGAiteration,1) == 0
+                estimatedPositionAfterNGAiteration = estimatedPositionEGA(:,1:2);
+            else
+                for EstLength = 1 : size(estimatedPositionAfterNGAiteration,1)
+                    if estimatedPositionEGA(EstLength,3) < estimatedPositionAfterNGAiteration(EstLength,3)
+                        estimatedPositionAfterNGAiteration(EstLength,:) = estimatedPositionEGA(EstLength,:);
+                    end
+                end
+            end
         end
+        PositionChoice = sprintf('The end of %s in GA ',mat2str(PopSize));
+        disp(endPop);
         
         ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
+        
+        endPop = sprintf('The end of %s in GA ',mat2str(PopSize));
+        disp(endPop);
     end
-    
+    endSheet = sprintf('The end of %s in GA ',mat2str(currentSheet));
+    disp(endSheet);
 end

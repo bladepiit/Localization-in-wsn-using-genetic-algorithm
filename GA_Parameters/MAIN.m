@@ -10,8 +10,12 @@ filename = 'Coordinates.xlsx'; % specifies the name of the Excel file that will 
 SheetNames = sheetnames(filename);% The sheetnames function is used to extract the sheet names from the Excel file.
 
 for SheetIndex = 1 : length(SheetNames)
+    
+
     % Get the name of the current sheet
     currentSheet = SheetNames(SheetIndex);
+    startSheet = sprintf('The beginning of %s in GA ',mat2str(currentSheet));
+    disp(startSheet);
     Conf = readCoordinates(currentSheet);
     % Perform operations on the current sheet
     numNodes = length(Conf); % Get the number of nodes from the Conf variable
@@ -27,9 +31,12 @@ for SheetIndex = 1 : length(SheetNames)
     for popIteration = 1 : length(ListPopulation)
         global PopSize;
         PopSize = ListPopulation(popIteration);
-        
+        startPop = sprintf('The beginning of %s in GA ',mat2str(PopSize));
+        disp(startPop);
+
         FileOfAverageErrorRateForAllEGA = [];
         FileOfAverageErrorRateForAllBGA = [];
+        estimatedPositionAfterNGAiteration = [];
         for IterationGA = 1 : IterationForGA
             outputIteration = sprintf('%s Iteration GA Round',mat2str(IterationGA));
             disp(outputIteration);
@@ -37,7 +44,7 @@ for SheetIndex = 1 : length(SheetNames)
             % claculate the distance between beacon nodes and unkown nodes
             ErrorRateForOneIterationEGA = [];
             ErrorRateForOneIterationBGA = [];
-
+            PositionOfAllForOneIteration = [];
             % variable for EGA
             numBeaconNodes = NumBeaconNodes;
             UnknownNodeIndex = 1;
@@ -68,7 +75,7 @@ for SheetIndex = 1 : length(SheetNames)
                     % Estimate Position for EGA
                     estimatedPositionEGA = findPosition(unknownNodePosition, beaconTabOfUnkownNode);
                     ErrorRateForOneIterationEGA = [ErrorRateForOneIterationEGA;estimatedPositionEGA(:,3)];
-
+                    PositionOfAllForOneIteration = [PositionOfAllForOneIteration;estimatedPositionEGA];
                     outputStr = sprintf('Unknown node position: %s\nBeacon in range: %s', mat2str(unknownNodePosition), mat2str(beaconTabOfUnkownNode));
                     disp(outputStr);
                     disp(estimatedPositionEGA);
@@ -130,9 +137,26 @@ for SheetIndex = 1 : length(SheetNames)
             % Error Rate for BGA
             AverageErrorRateForOneIterationBGA = sum(ErrorRateForOneIterationBGA) / length(ErrorRateForOneIterationBGA);
             FileOfAverageErrorRateForAllBGA = [FileOfAverageErrorRateForAllBGA;AverageErrorRateForOneIterationBGA];
+
+            % estimated position after 30 GA iteration 
+            if size(estimatedPositionAfterNGAiteration,1) == 0
+                estimatedPositionAfterNGAiteration = PositionOfAllForOneIteration;
+            else
+                for EstLength = 1 : size(estimatedPositionAfterNGAiteration,1)
+                    if PositionOfAllForOneIteration(EstLength,3) < estimatedPositionAfterNGAiteration(EstLength,3)
+                        estimatedPositionAfterNGAiteration(EstLength,:) = PositionOfAllForOneIteration(EstLength,:);
+                    end
+                end
+            end
         end
+        disp('after 30 iteration the estimated position :');
+        disp(estimatedPositionAfterNGAiteration);
         
-        ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
+        %ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
+        
+        endPop = sprintf('The end of %s in GA ',mat2str(PopSize));
+        disp(endPop);
     end
-    
+    endSheet = sprintf('The end of %s in GA ',mat2str(currentSheet));
+    disp(endSheet);
 end
