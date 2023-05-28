@@ -1,4 +1,4 @@
-function ErForIterationCase(ErForBasicAlgo, ErForEnhAlgo,NumIteration)
+function ErForIterationCase(ErForBasicAlgo, ErForEnhAlgo,NumIteration,currentSheet)
 
     % Calculer la somme des valeurs
     MynForBasedGA = sum(ErForBasicAlgo) / length(ErForBasicAlgo);
@@ -19,8 +19,8 @@ function ErForIterationCase(ErForBasicAlgo, ErForEnhAlgo,NumIteration)
     tableData = array2table(data', 'VariableNames', variableNames);
     sumTable = array2table(sumData, 'VariableNames', {'Moyenne'});
 
-    nameofRow = {'Bised GA'; 'Enhancement GA'}; % Specify the names of the rows as a cell array
-    rowTable = table(nameofRow, 'VariableNames', {'AlgoName'}); % Create a table for the row names
+    nameofRow = {'BGA'; 'EGA'}; % Specify the names of the rows as a cell array
+    rowTable = table(nameofRow, 'VariableNames', {' '}); % Create a table for the row names
 
     % Split the nested table variables
     tableDataSplit = splitvars(tableData);
@@ -36,7 +36,7 @@ function ErForIterationCase(ErForBasicAlgo, ErForEnhAlgo,NumIteration)
     %existingSheets = sheetnames(filename);
     % Generate the new sheet name
     %SheetName = sprintf('Sheet%d', length(existingSheets) + 1);
-    SheetName = sprintf('Itr%d',NumIteration);
+    SheetName = sprintf('%s%d',currentSheet ,NumIteration);
     writetable(tabb, filename, 'Sheet', SheetName);
 
 end

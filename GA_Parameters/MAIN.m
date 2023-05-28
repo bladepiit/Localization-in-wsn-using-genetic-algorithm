@@ -1,7 +1,7 @@
 % first we declare owr basic variables
 global numNodes;
 global IterationForNodes ;
-IterationForNodes = 30 ; 
+
 IterationForGA = 30 ;
 RSSI = 20 ; % the RSSI or the range of beacon nodes 
 
@@ -24,10 +24,16 @@ for SheetIndex = 1 : length(SheetNames)
     global NumUnkownNodes ; % Declare a global variable to store the number of unknown nodes for use in anther place
     NumUnkownNodes = numNodes - NumBeaconNodes; % Calculate the number of unknown nodes
 
-    ListPopulation = [10,20,40,80,160]; % Define a list of population values
+    %ListPopulation = [10,20,40,80,160]; % Define a list of population values
+    ListPopulation = [80];
     beaconNodesPossition = Conf(1:NumBeaconNodes,:);
     UnkownNodesReelPosition = Conf(NumBeaconNodes+1:end,:);
-    
+
+    TabIteration =[10, 25, 50, 100, 200]; % Define a list of iteration nodes values
+    for numIteration = 1 : length(TabIteration)
+        startIteration = sprintf('The beginning of %s iteration for Nodes ',mat2str(IterationForNodes));
+        disp(startIteration);
+        IterationForNodes = TabIteration(numIteration) ; 
     for popIteration = 1 : length(ListPopulation)
         global PopSize;
         PopSize = ListPopulation(popIteration);
@@ -240,11 +246,15 @@ for SheetIndex = 1 : length(SheetNames)
         end
         disp('after 30 iteration the estimated position :');
         disp(estimatedPositionAfterNGAiteration);
-        
-        ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
+       % fileForestimatedPositionAfterNGAiteration(estimatedPositionAfterNGAiteration,NodeNotLocalizableEGA);
+        %ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
         
         endPop = sprintf('The end of %s in GA ',mat2str(PopSize));
         disp(endPop);
+    end
+    ErForIterationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,IterationForNodes,currentSheet);
+    endIteration = sprintf('The end of %s iteration for Nodes ',mat2str(IterationForNodes));
+    disp(endIteration);
     end
     endSheet = sprintf('The end of %s in GA ',mat2str(currentSheet));
     disp(endSheet);
