@@ -246,13 +246,13 @@ for SheetIndex = 1 : length(SheetNames)
         end
         disp('after 30 iteration the estimated position :');
         disp(estimatedPositionAfterNGAiteration);
-        
+        fileForestimatedPositionAfterNGAiteration(estimatedPositionAfterNGAiteration,NodeNotLocalizableEGA);
         %ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
         
         endPop = sprintf('The end of %s in GA ',mat2str(PopSize));
         disp(endPop);
     end
-    ErForIterationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,IterationForNodes,);
+    ErForIterationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,IterationForNodes,currentSheet);
     endIteration = sprintf('The end of %s iteration for Nodes ',mat2str(IterationForNodes));
     disp(endIteration);
     end

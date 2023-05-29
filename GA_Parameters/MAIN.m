@@ -6,10 +6,10 @@ IterationForGA = 30 ;
 RSSI = 20 ; % the RSSI or the range of beacon nodes 
 
 
-filename = 'Coordinates.xlsx'; % specifies the name of the Excel file that will be used
+filename = 'FileOfConfigurationNodes.xlsx'; % specifies the name of the Excel file that will be used
 SheetNames = sheetnames(filename);% The sheetnames function is used to extract the sheet names from the Excel file.
 
-for SheetIndex = 1 : length(SheetNames)
+for SheetIndex = 3 : length(SheetNames)
     
 
     % Get the name of the current sheet
@@ -29,7 +29,8 @@ for SheetIndex = 1 : length(SheetNames)
     beaconNodesPossition = Conf(1:NumBeaconNodes,:);
     UnkownNodesReelPosition = Conf(NumBeaconNodes+1:end,:);
 
-    TabIteration =[10, 25, 50, 100, 200]; % Define a list of iteration nodes values
+   % TabIteration =[10, 25, 50, 100, 200]; % Define a list of iteration nodes values
+   TabIteration =[50];
     for numIteration = 1 : length(TabIteration)
         startIteration = sprintf('The beginning of %s iteration for Nodes ',mat2str(IterationForNodes));
         disp(startIteration);
@@ -246,7 +247,7 @@ for SheetIndex = 1 : length(SheetNames)
         end
         disp('after 30 iteration the estimated position :');
         disp(estimatedPositionAfterNGAiteration);
-       % fileForestimatedPositionAfterNGAiteration(estimatedPositionAfterNGAiteration,NodeNotLocalizableEGA);
+        fileForestimatedPositionAfterNGAiteration(estimatedPositionAfterNGAiteration,NodeNotLocalizableEGA,currentSheet);
         %ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
         
         endPop = sprintf('The end of %s in GA ',mat2str(PopSize));
@@ -256,8 +257,9 @@ for SheetIndex = 1 : length(SheetNames)
     endIteration = sprintf('The end of %s iteration for Nodes ',mat2str(IterationForNodes));
     disp(endIteration);
     end
+    ErrorRateOfNodesCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,currentSheet)
     endSheet = sprintf('The end of %s in GA ',mat2str(currentSheet));
     disp(endSheet);
-    figure(1);
-    Graph(beaconNodesPossition,UnkownNodesReelPosition,estimatedPositionAfterNGAiteration,NodeNotLocalizableEGA);
+    %figure(1);
+    %Graph(beaconNodesPossition,UnkownNodesReelPosition,estimatedPositionAfterNGAiteration,NodeNotLocalizableEGA);
 end
