@@ -1,4 +1,4 @@
-function [estimatedPosition] = findPosition_b(unknownNodePosition, beaconInRange)
+function [estimatedPosition] = findPositionBGA(unknownNodePosition, beaconInRange)
     reelPosition = unknownNodePosition;
     numBeaconNodes = length(beaconInRange);
    
@@ -14,32 +14,32 @@ function [estimatedPosition] = findPosition_b(unknownNodePosition, beaconInRange
 
     
 
-    pop = generatePopulation_b(PopSize, xMin, xMax, yMin, yMax) ; % generate population
+    pop = generatePopulationBGA(PopSize, xMin, xMax, yMin, yMax) ; % generate population
     %disp(pop);
-    fitness = calculateFitness_b(pop, beaconInRange, reelPosition) ; % calculate fitness of population
+    fitness = calculateFitnessBGA(pop, beaconInRange, reelPosition) ; % calculate fitness of population
     
     newPopulation = fitness;
     for i = 1 : IterationForNodes
         
         for j = 1 : (PopSize / 2)
-            parent1_position = get_parent_b(numBeaconNodes, fitness); 
-            parent2_position = get_parent_b(numBeaconNodes, fitness);
+            parent1_position = get_parentBGA(numBeaconNodes, fitness); 
+            parent2_position = get_parentBGA(numBeaconNodes, fitness);
             while parent1_position == parent2_position
                 parent2_position = get_parent(numBeaconNodes, fitness);
             end
             parent1 = fitness(parent1_position,:);
             parent2 = fitness(parent2_position,:);
-            sons = crossover_b(parent1, parent2) ; % crossover population
-            sons = mutation_b(sons, mutationRate, xMin, xMax, yMin, yMax) ; % mutate population
+            sons = crossover_BGA(parent1, parent2) ; % crossover population
+            sons = mutation_BGA(sons, mutationRate, xMin, xMax, yMin, yMax) ; % mutate population
             
             
            % add the sons to the new population
             newPopulation = [newPopulation; sons];
-           % disp(length(fitness));
+           
         end
         
         
-        newPopulation = evaluate_b(newPopulation);
+        newPopulation = evaluate(newPopulation);
        
         newPopulation = newPopulation(1:PopSize,:);
         

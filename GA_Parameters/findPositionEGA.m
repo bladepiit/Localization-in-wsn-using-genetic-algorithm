@@ -1,4 +1,4 @@
-function [estimatedPosition] = findPosition(unknownNodePosition, beaconInRange)
+function [estimatedPosition] = findPositionEGA(unknownNodePosition, beaconInRange)
     reelPosition = unknownNodePosition;
     numBeaconNodes = length(beaconInRange);
     global NumUnkownNodes ;

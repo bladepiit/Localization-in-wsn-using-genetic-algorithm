@@ -88,7 +88,7 @@ for SheetIndex = 1 : length(SheetNames)
                if size(beaconTabOfUnkownNode,1) >= 3
                     unknownNodePosition = UnkownNodesReelPositionEGA(UnknownNodeIndex,:);
                     % Estimate Position for EGA
-                    estimatedPositionEGA = findPosition(unknownNodePosition, beaconTabOfUnkownNode);
+                    estimatedPositionEGA = findPositionEGA(unknownNodePosition, beaconTabOfUnkownNode);
                     ErrorRateForOneIterationEGA = [ErrorRateForOneIterationEGA;estimatedPositionEGA(:,3)];
                     NodeEstimatedReelPosition = horzcat(estimatedPositionEGA,unknownNodePosition);
                     PositionOfAllForOneIteration = [PositionOfAllForOneIteration;NodeEstimatedReelPosition];
@@ -162,7 +162,7 @@ for SheetIndex = 1 : length(SheetNames)
                     unknownNodePositionBGA = UnkownNodesReelPositionBGA(UnknownNodeIndexBGA,:);
                    
                     % Estimate Position for BGA
-                    estimatedPositionBGA = findPosition_b(unknownNodePositionBGA, beaconTabOfUnkownNodeBGA); 
+                    estimatedPositionBGA = findPositionBGA(unknownNodePositionBGA, beaconTabOfUnkownNodeBGA); 
                     ErrorRateForOneIterationBGA = [ErrorRateForOneIterationBGA;estimatedPositionBGA(:,3)];
 
                     outputStr = sprintf('Unknown node position BGA: %s\nBeacon in range: %s', mat2str(unknownNodePositionBGA), mat2str(beaconTabOfUnkownNodeBGA));

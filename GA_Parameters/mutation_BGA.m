@@ -1,4 +1,4 @@
-function newPop = mutation_b(pop, mutationRate, xMin, xMax, yMin, yMax)
+function newPop = mutation_BGA(pop, mutationRate, xMin, xMax, yMin, yMax)
 % Perform mutation on the population
 % Iterate over each gene and mutate with probability mutationRate
 % Mutation is performed by adding a random value to the gene

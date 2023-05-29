@@ -1,4 +1,4 @@
-function [mean_squared_error] = calcMSE_b(errors,Numbeacon)
+function [mean_squared_error] = calcMSE_BGA(errors,Numbeacon)
 % Calcule la moyenne des carrés des erreurs (MSE)
 % errors : vecteur contenant les erreurs individuelles
 % mean_squared_error : la MSE

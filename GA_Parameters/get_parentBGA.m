@@ -1,4 +1,4 @@
-function [parent_position] = get_parent_b(numBeaconNodes, fitness)
+function [parent_position] = get_parentBGA(numBeaconNodes, fitness)
     errors_array = fitness(:,3);
     sum_errors_array = sum(errors_array);
     errors_array_inverted = errors_array.^(-1);

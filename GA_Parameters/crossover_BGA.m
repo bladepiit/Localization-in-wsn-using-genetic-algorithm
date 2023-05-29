@@ -1,4 +1,4 @@
-function [pop] = crossover_b(parent1_position, parent2_position)
+function [pop] = crossover_BGA(parent1_position, parent2_position)
     for i = 1:1
        parent1 = parent1_position;
       

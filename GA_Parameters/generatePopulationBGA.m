@@ -1,4 +1,4 @@
-function [pop] = generatePopulation_b(popSize, xMin, xMax, yMin, yMax)
+function [pop] = generatePopulationBGA(popSize, xMin, xMax, yMin, yMax)
     pop = zeros(popSize, 2);
     for i = 1:popSize
         pop(i, 1) = xMin + (xMax - xMin) * rand();
