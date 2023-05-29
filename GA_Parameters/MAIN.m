@@ -9,7 +9,7 @@ RSSI = 20 ; % the RSSI or the range of beacon nodes
 filename = 'FileOfConfigurationNodes.xlsx'; % specifies the name of the Excel file that will be used
 SheetNames = sheetnames(filename);% The sheetnames function is used to extract the sheet names from the Excel file.
 
-for SheetIndex = 3 : length(SheetNames)
+for SheetIndex = 1 : length(SheetNames)
     
 
     % Get the name of the current sheet
@@ -248,12 +248,12 @@ for SheetIndex = 3 : length(SheetNames)
         disp('after 30 iteration the estimated position :');
         disp(estimatedPositionAfterNGAiteration);
         fileForestimatedPositionAfterNGAiteration(estimatedPositionAfterNGAiteration,NodeNotLocalizableEGA,currentSheet);
+       
         %ErForPupulationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,PopSize,currentSheet);
-        
         endPop = sprintf('The end of %s in GA ',mat2str(PopSize));
         disp(endPop);
     end
-    ErForIterationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,IterationForNodes,currentSheet);
+    %ErForIterationCase(FileOfAverageErrorRateForAllBGA,FileOfAverageErrorRateForAllEGA,IterationForNodes,currentSheet);
     endIteration = sprintf('The end of %s iteration for Nodes ',mat2str(IterationForNodes));
     disp(endIteration);
     end

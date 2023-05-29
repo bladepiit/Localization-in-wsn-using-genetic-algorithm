@@ -11,9 +11,12 @@ for i = 1:length(SheetNames)
         selectedFSheetNames{end+1} = SheetNames{i};
     else if startsWith(SheetNames{i}, 'S', 'IgnoreCase', true)
             selectedSSheetNames{end+1} = SheetNames{i};
-         else
+    else
+        if startsWith(SheetNames{i}, 'T', 'IgnoreCase', true)
             selectedTSheetNames{end+1} = SheetNames{i};
-         end
+        end
+
+        end
     end
 end
 % Read the data from the selected sheets and extract the column named "Moyenne"

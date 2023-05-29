@@ -26,7 +26,7 @@ function ErrorRateOfNodesCase(FileOfAverageErrorRateForAllBGA,FileOfAverageError
     tabb = horzcat(tabb, sumTable); % Concatenate the sumTable with the tabb table
 
     % Write the tables to the Excel file
-    filename = 'AverageErrorInNodeCase.xlsx';
+    filename = 'ErrorRateInNodeCase.xlsx';
     writetable(tabb, filename, 'Sheet', currentSheet);
 
 end
